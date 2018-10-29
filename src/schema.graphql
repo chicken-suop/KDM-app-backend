@@ -1,25 +1,33 @@
-# import Link, LinkSubscriptionPayload, Vote, VoteSubscriptionPayload, LinkOrderByInput from "./generated/prisma.graphql" 
+# import Event, EventOrderByInput, LocationWhereUniqueInput!, NotificationWhereUniqueInput, PersonWhereUniqueInput, SongWhereUniqueInput, EventCategoryWhereUniqueInput from "./generated/prisma.graphql"
 
 type Query {
-  info: String!
-  feed(filter: String, skip: Int, first: Int, orderBy: LinkOrderByInput): Feed!
-}
-
-type Feed {
-  links: [Link!]!
-  count: Int!
+  feed(filter: String, skip: Int, first: Int, orderBy: EventOrderByInput): Feed!
 }
 
 type Mutation {
-  post(url: String!, description: String!): Link!
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
-  vote(linkId: ID!): Vote!
+  createEvent(
+    start: DateTime!,
+    end: DateTime!,
+    name: String!,
+    people: [String!],
+    location: String!,
+    notifications: [String!],
+    songs: [String!],
+    category: String,
+  ): Event!
+  # vote(linkId: ID!): Vote!
 }
 
-type Subscription {
-  newLink: LinkSubscriptionPayload
-  newVote: VoteSubscriptionPayload
+# type Subscription {
+#   newLink: LinkSubscriptionPayload
+#   newVote: VoteSubscriptionPayload
+# }
+
+type Feed {
+  events: [Event!]!
+  count: Int!
 }
 
 type AuthPayload {
@@ -31,5 +39,5 @@ type User {
   id: ID!
   name: String!
   email: String!
-  links: [Link!]!
+  events: [Event!]!
 }

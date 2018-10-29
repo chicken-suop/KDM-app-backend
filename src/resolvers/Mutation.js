@@ -2,18 +2,26 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { APP_SECRET, getUserId } = require('../utils')
 
-function post(parent, args, context, info) {
+async function createEvent(parent, args, context, info) {
   const userId = getUserId(context)
-  return context.db.mutation.createLink(
-    {
-      data: {
-        url: args.url,
-        description: args.description,
-        postedBy: { connect: { id: userId } },
+  return context.db.mutation.createEvent({
+    data: {
+      start: args.start,
+      end: args.end,
+      name: args.name,
+      people: {
+        create: {
+          status: 'Waiting',
+          user: { connect: { id: userId } },
+          role: { connect: { name: "Organiser", category: "Defaults" } },
+        },
       },
+      location: { connect: args.location },
+      notifications: { connect: args.notifications },
+      songs: { connect: args.songs },
+      category: { connect: args.category },
     },
-    info,
-  )
+  }, info)
 }
 
 async function signup(parent, args, context, info) {
@@ -69,8 +77,8 @@ async function vote(parent, args, context, info) {
 }
 
 module.exports = {
-  post,
+  createEvent,
   signup,
   login,
-  vote
+  // vote
 }

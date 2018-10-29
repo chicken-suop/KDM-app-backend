@@ -1,10 +1,40 @@
-type Link {
+type Event {
   id: ID! @unique
-  createdAt: DateTime!
-  description: String!
-  url: String!
-  postedBy: User
-  votes: [Vote!]!
+  start: DateTime!
+  end: DateTime!
+  name: String!
+  location: Location!
+  # Per event notifications (not customisable per user)
+  notifications: [Notification!]! @relation(name: "EventNotification", onDelete: CASCADE)
+  people: [Person!]! @relation(name: "EventPerson", onDelete: CASCADE)
+  songs: [Song!]!
+  category: EventCategory
+}
+
+type Location {
+  id: ID! @unique
+  name: String! @unique
+  events: [Event!]!
+}
+
+type Notification {
+  id: ID! @unique
+  event: Event! @relation(name: "EventNotification", onDelete: SET_NULL)
+  date: DateTime!
+  type: NotificationType!
+}
+
+enum NotificationType {
+  Notification
+  Email
+}
+
+type Person {
+  id: ID! @unique
+  user: User!
+  # We can have people without roles
+  role: Role
+  status: PersonStatus!
 }
 
 type User {
@@ -12,12 +42,34 @@ type User {
   name: String!
   email: String! @unique
   password: String!
-  links: [Link!]!
-  votes: [Vote!]!
 }
 
-type Vote {
+type Role {
   id: ID! @unique
-  link: Link!
-  user: User!
+  name: String! @unique
+  category: String! @unique
+}
+
+enum PersonStatus {
+  Accepted
+  Declined
+  Waiting
+}
+
+type Song {
+  id: ID! @unique
+  name: String!
+  artist: SongArtist! @relation(name: "SongArtist", onDelete: SET_NULL)
+}
+
+type SongArtist {
+  id: ID! @unique
+  name: String!
+  songs: [Song!]! @relation(name: "SongArtist", onDelete: CASCADE)
+}
+
+type EventCategory {
+  id: ID! @unique
+  name: String! @unique
+  events: [Event!]!
 }

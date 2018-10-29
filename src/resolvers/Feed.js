@@ -1,7 +1,7 @@
-function links(parent, args, context, info) {
-  return context.db.query.links({ where: { id_in: parent.linkIds } }, info)
+function events(parent, args, context, info) {
+  return context.db.query.events({ where: { id_in: parent.eventIds } }, info)
 }
 
 module.exports = {
-  links,
+  events,
 }

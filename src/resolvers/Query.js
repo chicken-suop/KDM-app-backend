@@ -2,13 +2,15 @@ async function feed(parent, args, context, info) {
   const where = args.filter
     ? {
         OR: [
-          { url_contains: args.filter },
-          { description_contains: args.filter },
+          { name_contains: args.filter },
+          { category: { name_contains: args.filter } },
+          { location: { name_contains: args.filter } },
+          { people: { user: { OR: { name_contains: args.filter, email_contains: args.filter } } } },
         ],
       }
     : {}
 
-  const queriedLinkes = await context.db.query.links(
+  const queriedEvents = await context.db.query.events(
     { where, skip: args.skip, first: args.first, orderBy: args.orderBy },
     `{ id }`,
   )
@@ -20,11 +22,11 @@ async function feed(parent, args, context, info) {
       }
     }
   `
-  const linksConnection = await context.db.query.linksConnection({}, countSelectionSet)
+  const eventsConnection = await context.db.query.eventsConnection({}, countSelectionSet)
 
   return {
-    count: linksConnection.aggregate.count,
-    linkIds: queriedLinkes.map(link => link.id),
+    count: eventsConnection.aggregate.count,
+    eventIds: queriedEvents.map(event => event.id),
   }
 }
 
