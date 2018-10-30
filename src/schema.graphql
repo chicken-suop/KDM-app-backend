@@ -1,4 +1,4 @@
-# import Event, EventOrderByInput, LocationWhereUniqueInput!, NotificationWhereUniqueInput, PersonWhereUniqueInput, SongWhereUniqueInput, EventCategoryWhereUniqueInput from "./generated/prisma.graphql"
+# import EventOrderByInput, EventCreateInput, Event from "./generated/prisma.graphql"
 
 type Query {
   feed(filter: String, skip: Int, first: Int, orderBy: EventOrderByInput): Feed!
@@ -7,16 +7,7 @@ type Query {
 type Mutation {
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
-  createEvent(
-    start: DateTime!,
-    end: DateTime!,
-    name: String!,
-    people: [String!],
-    location: String!,
-    notifications: [String!],
-    songs: [String!],
-    category: String,
-  ): Event!
+  createEvent(data: EventCreateInput!): Event!
   # vote(linkId: ID!): Vote!
 }
 

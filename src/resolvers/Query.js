@@ -1,19 +1,21 @@
-async function feed(parent, args, context, info) {
+async function feed(parent, args, context) {
   const where = args.filter
     ? {
-        OR: [
-          { name_contains: args.filter },
-          { category: { name_contains: args.filter } },
-          { location: { name_contains: args.filter } },
-          { people: { user: { OR: { name_contains: args.filter, email_contains: args.filter } } } },
-        ],
-      }
-    : {}
+      OR: [
+        { name_contains: args.filter },
+        { category: { name_contains: args.filter } },
+        { location: { name_contains: args.filter } },
+        { people: { user: { OR: { name_contains: args.filter, email_contains: args.filter } } } },
+      ],
+    }
+    : {};
 
   const queriedEvents = await context.db.query.events(
-    { where, skip: args.skip, first: args.first, orderBy: args.orderBy },
-    `{ id }`,
-  )
+    {
+      where, skip: args.skip, first: args.first, orderBy: args.orderBy,
+    },
+    '{ id }',
+  );
 
   const countSelectionSet = `
     {
@@ -21,15 +23,15 @@ async function feed(parent, args, context, info) {
         count
       }
     }
-  `
-  const eventsConnection = await context.db.query.eventsConnection({}, countSelectionSet)
+  `;
+  const eventsConnection = await context.db.query.eventsConnection({}, countSelectionSet);
 
   return {
     count: eventsConnection.aggregate.count,
     eventIds: queriedEvents.map(event => event.id),
-  }
+  };
 }
 
 module.exports = {
   feed,
-}
+};

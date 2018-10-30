@@ -1,68 +1,57 @@
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const { APP_SECRET, getUserId } = require('../utils')
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { APP_SECRET, getUserId } = require('../utils');
 
 async function createEvent(parent, args, context, info) {
-  const userId = getUserId(context)
-  return context.db.mutation.createEvent({
-    data: {
-      start: args.start,
-      end: args.end,
-      name: args.name,
-      people: {
-        create: {
-          status: 'Waiting',
-          user: { connect: { id: userId } },
-          role: { connect: { name: "Organiser", category: "Defaults" } },
-        },
-      },
-      location: { connect: args.location },
-      notifications: { connect: args.notifications },
-      songs: { connect: args.songs },
-      category: { connect: args.category },
-    },
-  }, info)
+  const userId = getUserId(context);
+  const newArgs = args;
+  newArgs.data.people.create = [{
+    status: 'Waiting',
+    user: { connect: { id: userId } },
+    role: { connect: { name: 'Organiser', category: 'Defaults' } },
+  }, ...newArgs.data.people.create || []];
+  return context.db.mutation.createEvent(newArgs, info);
 }
 
-async function signup(parent, args, context, info) {
-  const password = await bcrypt.hash(args.password, 10)
+async function signup(parent, args, context) {
+  const password = await bcrypt.hash(args.password, 10);
   const user = await context.db.mutation.createUser({
     data: { ...args, password },
-  }, `{ id }`)
+  }, '{ id }');
 
-  const token = jwt.sign({ userId: user.id }, APP_SECRET)
+  const token = jwt.sign({ userId: user.id }, APP_SECRET);
 
   return {
     token,
     user,
-  }
+  };
 }
 
-async function login(parent, args, context, info) {
-  const user = await context.db.query.user({ where: { email: args.email } }, `{ id password }`)
+async function login(parent, args, context) {
+  const user = await context.db.query.user({ where: { email: args.email } }, '{ id password }');
   if (!user) {
-    throw new Error('No such user found')
+    throw new Error('No such user found');
   }
 
-  const valid = await bcrypt.compare(args.password, user.password)
+  const valid = await bcrypt.compare(args.password, user.password);
   if (!valid) {
-    throw new Error('Invalid password')
+    throw new Error('Invalid password');
   }
 
   return {
     token: jwt.sign({ userId: user.id }, APP_SECRET),
     user,
-  }
+  };
 }
 
 async function vote(parent, args, context, info) {
-  const userId = getUserId(context)
+  const userId = getUserId(context);
   const linkExists = await context.db.exists.Vote({
     user: { id: userId },
     link: { id: args.linkId },
-  })
+  });
   if (linkExists) {
-    throw new Error(`Already voted for link: ${args.linkId}`)
+    throw new Error(`Already voted for link: ${args.linkId}`);
   }
 
   return context.db.mutation.createVote(
@@ -73,7 +62,7 @@ async function vote(parent, args, context, info) {
       },
     },
     info,
-  )
+  );
 }
 
 module.exports = {
@@ -81,4 +70,4 @@ module.exports = {
   signup,
   login,
   // vote
-}
+};
