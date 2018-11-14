@@ -5,6 +5,8 @@ const { APP_SECRET, getUserId } = require('../utils');
 async function createEvent(parent, args, context, info) {
   const userId = getUserId(context);
   const newArgs = args;
+  newArgs.data.people = newArgs.data.people || {};
+  // newArgs.data.people.create = [];
   newArgs.data.people.create = [{
     status: 'Waiting',
     user: { connect: { id: userId } },

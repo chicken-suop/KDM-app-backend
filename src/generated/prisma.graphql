@@ -1,5 +1,5 @@
 # source: http://localhost:4466
-# timestamp: Mon Oct 29 2018 16:00:50 GMT+0100 (CET)
+# timestamp: Fri Nov 02 2018 16:21:06 GMT+0100 (CET)
 
 type AggregateEvent {
   count: Int!
@@ -1883,6 +1883,7 @@ input SongArtistWhereInput {
 
 input SongArtistWhereUniqueInput {
   id: ID
+  name: String
 }
 
 """A connection to a list of items."""
@@ -2126,6 +2127,7 @@ input SongWhereInput {
 
 input SongWhereUniqueInput {
   id: ID
+  name: String
 }
 
 type Subscription {

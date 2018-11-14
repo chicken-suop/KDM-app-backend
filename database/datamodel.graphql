@@ -58,13 +58,13 @@ enum PersonStatus {
 
 type Song {
   id: ID! @unique
-  name: String!
+  name: String! @unique
   artist: SongArtist! @relation(name: "SongArtist", onDelete: SET_NULL)
 }
 
 type SongArtist {
   id: ID! @unique
-  name: String!
+  name: String! @unique
   songs: [Song!]! @relation(name: "SongArtist", onDelete: CASCADE)
 }
 
