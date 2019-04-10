@@ -1,5 +1,5 @@
 # source: http://localhost:4466
-# timestamp: Fri Nov 02 2018 16:21:06 GMT+0100 (CET)
+# timestamp: Wed Nov 14 2018 20:22:34 GMT+0100 (Central European Standard Time)
 
 type AggregateEvent {
   count: Int!
@@ -153,6 +153,10 @@ input EventCategorySubscriptionWhereInput {
 input EventCategoryUpdateInput {
   name: String
   events: EventUpdateManyWithoutCategoryInput
+}
+
+input EventCategoryUpdateManyMutationInput {
+  name: String
 }
 
 input EventCategoryUpdateOneWithoutEventsInput {
@@ -417,6 +421,12 @@ input EventUpdateInput {
   people: PersonUpdateManyInput
   songs: SongUpdateManyInput
   category: EventCategoryUpdateOneWithoutEventsInput
+}
+
+input EventUpdateManyMutationInput {
+  start: DateTime
+  end: DateTime
+  name: String
 }
 
 input EventUpdateManyWithoutCategoryInput {
@@ -750,6 +760,10 @@ input LocationUpdateInput {
   events: EventUpdateManyWithoutLocationInput
 }
 
+input LocationUpdateManyMutationInput {
+  name: String
+}
+
 input LocationUpdateOneRequiredWithoutEventsInput {
   create: LocationCreateWithoutEventsInput
   connect: LocationWhereUniqueInput
@@ -908,15 +922,15 @@ type Mutation {
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertRole(where: RoleWhereUniqueInput!, create: RoleCreateInput!, update: RoleUpdateInput!): Role!
   upsertSong(where: SongWhereUniqueInput!, create: SongCreateInput!, update: SongUpdateInput!): Song!
-  updateManyEvents(data: EventUpdateInput!, where: EventWhereInput): BatchPayload!
-  updateManyLocations(data: LocationUpdateInput!, where: LocationWhereInput): BatchPayload!
-  updateManyNotifications(data: NotificationUpdateInput!, where: NotificationWhereInput): BatchPayload!
-  updateManySongArtists(data: SongArtistUpdateInput!, where: SongArtistWhereInput): BatchPayload!
-  updateManyEventCategories(data: EventCategoryUpdateInput!, where: EventCategoryWhereInput): BatchPayload!
-  updateManyPersons(data: PersonUpdateInput!, where: PersonWhereInput): BatchPayload!
-  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
-  updateManyRoles(data: RoleUpdateInput!, where: RoleWhereInput): BatchPayload!
-  updateManySongs(data: SongUpdateInput!, where: SongWhereInput): BatchPayload!
+  updateManyEvents(data: EventUpdateManyMutationInput!, where: EventWhereInput): BatchPayload!
+  updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
+  updateManyNotifications(data: NotificationUpdateManyMutationInput!, where: NotificationWhereInput): BatchPayload!
+  updateManySongArtists(data: SongArtistUpdateManyMutationInput!, where: SongArtistWhereInput): BatchPayload!
+  updateManyEventCategories(data: EventCategoryUpdateManyMutationInput!, where: EventCategoryWhereInput): BatchPayload!
+  updateManyPersons(data: PersonUpdateManyMutationInput!, where: PersonWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
+  updateManyRoles(data: RoleUpdateManyMutationInput!, where: RoleWhereInput): BatchPayload!
+  updateManySongs(data: SongUpdateManyMutationInput!, where: SongWhereInput): BatchPayload!
   deleteManyEvents(where: EventWhereInput): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   deleteManyNotifications(where: NotificationWhereInput): BatchPayload!
@@ -1049,6 +1063,11 @@ input NotificationUpdateInput {
   date: DateTime
   type: NotificationType
   event: EventUpdateOneRequiredWithoutNotificationsInput
+}
+
+input NotificationUpdateManyMutationInput {
+  date: DateTime
+  type: NotificationType
 }
 
 input NotificationUpdateManyWithoutEventInput {
@@ -1298,6 +1317,10 @@ input PersonUpdateManyInput {
   upsert: [PersonUpsertWithWhereUniqueNestedInput!]
 }
 
+input PersonUpdateManyMutationInput {
+  status: PersonStatus
+}
+
 input PersonUpdateWithWhereUniqueNestedInput {
   where: PersonWhereUniqueInput!
   data: PersonUpdateDataInput!
@@ -1511,6 +1534,11 @@ input RoleUpdateDataInput {
 }
 
 input RoleUpdateInput {
+  name: String
+  category: String
+}
+
+input RoleUpdateManyMutationInput {
   name: String
   category: String
 }
@@ -1771,6 +1799,10 @@ input SongArtistUpdateInput {
   songs: SongUpdateManyWithoutArtistInput
 }
 
+input SongArtistUpdateManyMutationInput {
+  name: String
+}
+
 input SongArtistUpdateOneRequiredWithoutSongsInput {
   create: SongArtistCreateWithoutSongsInput
   connect: SongArtistWhereUniqueInput
@@ -1996,6 +2028,10 @@ input SongUpdateManyInput {
   delete: [SongWhereUniqueInput!]
   update: [SongUpdateWithWhereUniqueNestedInput!]
   upsert: [SongUpsertWithWhereUniqueNestedInput!]
+}
+
+input SongUpdateManyMutationInput {
+  name: String
 }
 
 input SongUpdateManyWithoutArtistInput {
@@ -2247,6 +2283,12 @@ input UserUpdateDataInput {
 }
 
 input UserUpdateInput {
+  name: String
+  email: String
+  password: String
+}
+
+input UserUpdateManyMutationInput {
   name: String
   email: String
   password: String

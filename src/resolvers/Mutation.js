@@ -15,7 +15,7 @@ async function createEvent(parent, args, context, info) {
   return context.db.mutation.createEvent(newArgs, info);
 }
 
-async function signup(parent, args, context) {
+async function signUp(parent, args, context) {
   const password = await bcrypt.hash(args.password, 10);
   const user = await context.db.mutation.createUser({
     data: { ...args, password },
@@ -29,15 +29,15 @@ async function signup(parent, args, context) {
   };
 }
 
-async function login(parent, args, context) {
+async function signIn(parent, args, context) {
   const user = await context.db.query.user({ where: { email: args.email } }, '{ id password }');
   if (!user) {
-    throw new Error('No such user found');
+    throw new Error('Wrong email or password');
   }
 
   const valid = await bcrypt.compare(args.password, user.password);
   if (!valid) {
-    throw new Error('Invalid password');
+    throw new Error('Wrong email or password');
   }
 
   return {
@@ -69,7 +69,7 @@ async function vote(parent, args, context, info) {
 
 module.exports = {
   createEvent,
-  signup,
-  login,
+  signUp,
+  signIn,
   // vote
 };
